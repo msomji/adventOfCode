@@ -42,30 +42,14 @@ class Intcode
                 p "solution: #{param1}"
                 @position+=2
             elsif opcode == 5
-                if param1 != 0
-                    @position = param2
-                else 
-                    @position+=3
-                end
+                @position = param1 != 0 ? param2 : @position+=3
             elsif opcode == 6
-                if param1 == 0
-                    @position = param2
-                else 
-                    @position+=3
-                end
+                @position = param1 == 0? param2 : @position+=3
             elsif opcode == 7
-                if param1 < param2
-                    @program[@program[@position + 3]] = 1
-                else
-                    @program[@program[@position + 3]] = 0
-                end
+                @program[@program[@position + 3]]  =  param1 < param2 ? 1 :  0
                 @position+=4
             elsif opcode == 8
-                if param1 === param2
-                    @program[@program[@position + 3]] = 1
-                else
-                    @program[@program[@position + 3]] = 0
-                end
+                @program[@program[@position + 3]] =  param1 === param2 ? 1 : 0
                 @position+=4
             elsif @program[@position] == 99
                 isTrue = false
