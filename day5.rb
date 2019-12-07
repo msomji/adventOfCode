@@ -27,6 +27,10 @@ class Intcode
 
                 param1 = (mode1 == 1 ? @program[@position +1] : @program[@program[@position +1]])
                 param2 = (mode2 == 1 ? @program[@position+2] : @program[@program[@position+2]])
+                p '>>>>'
+                p param1
+                p param2
+                p '<<<<'
             if opcode == 1
                 @program[@program[@position + 3]] = param1 + param2
                 @position+=4
@@ -83,5 +87,5 @@ program = Intcode.new(INPUT2)
 # program = Intcode.new([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
 #     1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
 #     999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
-p program.process()
+ program.process()
 #  program.part2()
