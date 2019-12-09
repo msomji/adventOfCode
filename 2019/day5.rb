@@ -82,7 +82,7 @@ end
 # program = Intcode.new([1002,4,3,4,33])
 # program = Intcode.new([3,0,4,0,99])
 # program = Intcode.new([1101,100,-1,4,0])
-program = Intcode.new(INPUT2)
+program = Intcode.new(INPUT)
 # program = Intcode.new([3,3,1107,-1,8,3,4,3,99])
 # program = Intcode.new([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
 #     1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,

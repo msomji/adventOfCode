@@ -10,26 +10,32 @@
 class Intcode
 
     def initialize(program)
-        @program = File.open(program).readlines[0].split(',').map(&:to_i)
-        @programFreeze = @program.dup
+        # @program = File.open(program).readlines[0].split(',').map(&:to_i)
+
+        # @program = [2,3,0,3,99]
+        # @program = [2,4,4,5,99,0]
+        @program = [1,1,1,4,99,5,6,0,99]
+        # @programFreeze = @program.dup
         @position = 0
     end
 
     def process
         while true
-            noun = @program[@program[@position +1]]
-            verb = @program[@program[@position +2]]
             case @program[@position]
-                when 1
-                    @program[@program[@position +3]] = noun + verb
-                when 2
-                    @program[@program[@position +3]] = noun * verb
-                else 99
+            when 1
+                @noun = @program[@program[@position +1]] #1 | 5
+                @verb = @program[@program[@position +2]] #1 6
+                @program[@program[@position +3]] = @noun + @verb
+            when 2
+                @noun = @program[@program[@position +1]] #1 | 5
+                @verb = @program[@program[@position +2]] #1 6
+                @program[@program[@position +3]] = @noun * @verb
+                else 
                     break
-            end
-            @position+=4
+                end
+                @position+=4
         end
-        @program[0]
+        return @program
     end
 
     def part2
@@ -50,4 +56,4 @@ end
 
 program = Intcode.new("input.txt")
 p "part 1: #{program.process()}"
-p "part 2: #{program.part2()}"
+# p "part 2: #{program.part2()}"
