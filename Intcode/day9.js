@@ -28,28 +28,31 @@ class Intcode {
         while(this.continue) {
           this.code = "00000"+this.program[this.position]
           this.opcode = Number.parseInt(this.code[this.code.length -1])
-          this.mode1 = Number.parseInt(this.code[this.code.length -3]|| 0) 
-          this.mode2 = Number.parseInt(this.code[this.code.length -4]|| 0) 
-          this.mode3 = Number.parseInt(this.code[this.code.length -5]|| 0) 
+          this.mode1 = Number.parseInt(this.code[this.code.length -3]) 
+          this.mode2 = Number.parseInt(this.code[this.code.length -4]) 
+          this.mode3 = Number.parseInt(this.code[this.code.length -5]) 
           
           if(this.mode1 === 0) { // position mode
             if(this.program[this.program[this.position +1]] === undefined) {
+              // console.log('37')
               if(this.program[this.program[this.position +1]] == undefined)
+              // console.log('38')
               this.program[this.program[this.position +1]] = 0
-              console.log('turned')
-              console.log(this.program)
+              // console.log(this.program)
             }
             this.param1 = Number.parseInt(this.program[this.program[this.position +1]])
             
           } else if((this.mode1 === 1)) { // immidiate mode
             // extendedMemory
             if(this.program[this.position +1] === undefined) {
+              
               this.program[this.position +1] = 0
             }
             this.param1 = Number.parseInt(this.program[this.position +1])
             
           } else if(this.mode1 === 2) { // relative mode
             if(this.program[this.relativeBase + this.program[this.position +1]] === undefined) {
+              // console.log('55')
               this.program[this.relativeBase + this.program[this.position +1]] = 0
             }
             this.param1
@@ -58,12 +61,14 @@ class Intcode {
           if(this.mode2 === 0) { // position mode
             // extendedMemory
             if(this.program[this.program[this.position+2]] === undefined) {
+              // console.log('64')
               this.program[this.program[this.position+2]] = 0
             }
             this.param2 = Number.parseInt(this.program[this.program[this.position+2]])
           } else if(this.mode2 === 1) { // immidiate mode
             // extendedMemory
             if(this.program[this.position+2] === undefined) {
+              // console.log('71')
               this.program[this.position+2] = 0
             }
             this.param2 = Number.parseInt(this.program[this.position+2])
@@ -71,6 +76,7 @@ class Intcode {
             // extendedMemory
             // console.log(setting2)
             if(this.program[this.program[(this.relativeBase >= 0 ? this.relativeBase : 0) + this.position+2]] === undefined) {
+              // console.log('79')
               this.program[this.program[(this.relativeBase >= 0 ? this.relativeBase : 0) + this.position+2]] = 0
             }
             this.param2 = Number.parseInt(this.program[this.relativeBase +this.program[ this.position+2]])
@@ -82,14 +88,14 @@ class Intcode {
           // this.param2 = this.mode2 ==== 1 ? Number.parseInt(this.program[this.position+2]) : Number.parseInt(this.program[this.program[this.position+2]])
           
           if (this.opcode === 1){
-            console.log('hehrer')
+            // console.log('hehrer')
             this.program[this.program[this.position + 3]] = this.param1 + this.param2
             this.updatedProgram = [...this.program]
             this.position+=4
             
           }
           else if (this.opcode === 2) {
-            console.log('hehrer')
+            // console.log('hehrer')
             this.program[this.program[this.position +3]] = this.param1 * this.param2
             
             this.updatedProgram = [...this.program]
@@ -132,7 +138,7 @@ class Intcode {
           }
           else if(this.opcode === 9) {
             this.relativeBase = this.relativeBase + this.param1
-            console.log(this.relativeBase)
+            // console.log(this.relativeBase)
             this.position+=2 // not sure if this is correct
           }
           else {
@@ -151,6 +157,7 @@ class Intcode {
     }
 }
 
-INPUT = [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]
-subject = new Intcode([...INPUT, ...new Array(1000).fill(0)]).process(8)
-console.log(subject.solution)
+module.exports = Intcode
+// INPUT = [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]
+// subject = new Intcode([...INPUT]).process(8)
+// console.log(subject.solution)

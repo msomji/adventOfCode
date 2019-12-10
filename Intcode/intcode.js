@@ -8,11 +8,11 @@ class Intcode {
         this.relativeBase = 0
     }
     getImmidiateMode(program, position) {
-        return program[position]
+        return program[position] || 0
     }
     
     getPositionMode(program, position) {
-        return program[program[position]]
+        return program[(program[position] || 0)] || 0
     }
 
     getParamFromMode(mode, program, position, relativeBase) {
@@ -22,7 +22,7 @@ class Intcode {
             case 1: // immidiate mode
                 return this.getImmidiateMode(program, position)
             case 2: //relative mode
-                return program[program[position]+ relativeBase ] 
+                return program[(program[position] || 0)+ relativeBase ] ||0
         }
 
     }
@@ -36,9 +36,9 @@ class Intcode {
             let param2Mode = Number.parseInt(code.slice(-4,-3))
             let param3Mode = Number.parseInt(code.slice(-5,-4))
 
-            let param1 = this.getParamFromMode(param1Mode, this.program, this.position+1, this.relativeBase)
-            let param2 = this.getParamFromMode(param2Mode, this.program, this.position+2, this.relativeBase)
-            let param3 = this.getParamFromMode(param3Mode, this.program, this.position+3, this.relativeBase)
+            let param1 = this.getParamFromMode(param1Mode, this.program, this.position+1, this.relativeBase) || 0
+            let param2 = this.getParamFromMode(param2Mode, this.program, this.position+2, this.relativeBase) || 0
+            let param3 = this.getParamFromMode(param3Mode, this.program, this.position+3, this.relativeBase) || 0
 
            
            
