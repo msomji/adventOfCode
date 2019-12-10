@@ -1,0 +1,16 @@
+{
+  "name": "intcode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "intcode.js",
+  "scripts": {
+    "test": "jasmine intcode.spec.js",
+    "watch": "nodemon --exec 'npm run test'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jasmine": "^3.5.0",
+    "nodemon": "^2.0.1"
+  }
+}
