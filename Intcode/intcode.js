@@ -84,7 +84,7 @@ class Intcode {
                     this.position+=4
                     break;
                 case 9: 
-                    this.relativeBase += this.param1
+                this.relativeBase += this.getImmidiateMode(this.program, this.position+1)
                     this.position+=2
                     break;
                 case 99: 
