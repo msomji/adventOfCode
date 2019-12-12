@@ -4,13 +4,14 @@
   "description": "",
   "main": "intcode.js",
   "scripts": {
-    "test": "jasmine intcode.spec.js",
+    "test": "jasmine *.spec.js",
     "watch": "nodemon --exec 'npm run test'"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "jasmine": "^3.5.0",
+    "js-combinatorics": "^0.5.4",
     "nodemon": "^2.0.1"
   }
 }
