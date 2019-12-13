@@ -1,9 +1,9 @@
 class Intcode {
-    constructor(program, position=0) {
+    constructor(program, position=0, relative = 0) {
         this.program = program
         this.position = position
         this.solution = []
-        this.relativeBase = 0
+        this.relativeBase = relative
     }
 
     accessMemory(program, position) {
@@ -32,9 +32,8 @@ class Intcode {
         }
     };
 
-    process(inputs = [0]) {
+    process() {
         let halted = false;
-        let fiFoInput = inputs
         while (!halted) {
             let code = "0000000000000000" + this.program[this.position]
             let opcode = Number.parseInt(code.slice(-2))
@@ -63,20 +62,14 @@ class Intcode {
 
                     return {
                         next: nextInput => {
-                            // console.log(this.program[param1Address] )
                             let updatedProgram = [
                                 ...this.program
                             ]
                             updatedProgram[param1Address] = nextInput        
-                            // console.log(this.program[param1Address] )
-                            return new Intcode(updatedProgram, this.position+2).process()
+                            return new Intcode(updatedProgram, this.position+2, this.relativeBase).process()
                         },
                         solution: this.solution,
                     }
-                    this.program[param1Address] = fiFoInput[fiFoInput.length-1]
-                    fiFoInput.length = fiFoInput.length > 0 ? fiFoInput.length-1 :  0
-                    this.position+=2
-                    break;
                 case 4: 
                     this.solution.push(param1Value);
                     this.position+=2
