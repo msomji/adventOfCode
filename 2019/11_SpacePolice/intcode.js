@@ -59,15 +59,14 @@ class Intcode {
                     this.position+=4
                     break;
                 case 3: 
-                    return {
-                        next: nextInput => {
+                return {
+                    next: nextInput => {
                             let updatedProgram = [
                                 ...this.program
                             ]
-                            updatedProgram[param1Address] = nextInput        
-                            return new Intcode(updatedProgram, this.position+2).process()
+                            updatedProgram[param1Address] = nextInput
+                            return new Intcode(updatedProgram, this.position+2, this.relativeBase).process()
                         },
-
                         solution: this.solution,
                     }
                 case 4: 
