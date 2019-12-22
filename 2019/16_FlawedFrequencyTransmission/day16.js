@@ -8,18 +8,8 @@ const main = async (path) => {
   rl.on("line", (line) =>{
     let input = line.split('').map(Number)
       console.log(`part1: ${calculateOutputAtPhase(input, 100).slice(0,8)}`)
-      // console.log(`part2: ${part2(input)}`)
+      console.log(`part2: ${part2(input)}`)
   })
-
-}
-
-const part2 = (input) => {
-  let part2Input = new Array(10000).fill('').reduce((acc) => [...acc, input], []).flat()
-  let indexOfMessage = [...part2Input].slice(0,7).join('')
-  return calculateOutputAtPhase(part2Input, 100).slice(indexOfMessage, indexOfMessage+8)
-
-
-
 }
 
 const calculateOutputAtPhase = (input, numberOfPhases, pattern = [0,1,0,-1]) => {
@@ -57,6 +47,21 @@ const makePatternOfLength = (pattern, length, accumulatedPattern = []) => {
     return accumulatedPattern;
   }
   return makePatternOfLength(pattern, length, [...accumulatedPattern, ...pattern])
+}
+
+const calculateReversePhase = nums => {
+  return nums.reverse().reduce((updated, current, i) => {
+    updated.push(((updated[i - 1] || 0) + current) % 10);
+    return updated;
+  }, []).reverse()
+};
+
+const part2 = (input) => {
+  let part2Input = new Array(10000).fill('').reduce((acc) => [...acc, input], []).flat()
+  let indexOfMessage = part2Input.slice(0,7).join('')
+  let trimmedInput = part2Input.slice(indexOfMessage)
+  
+  return new Array(100).fill('').reduce((acc) =>  calculateReversePhase(acc), trimmedInput).slice(0, 8).join('');
 }
 
 module.exports = main('./inputs.txt')
