@@ -1,9 +1,29 @@
-let INITIAL_VELOCTY = [
+const INITIAL_VELOCTY = [
   [0,0,0],
   [0,0,0],
   [0,0,0],
   [0,0,0],
 ];
+const INITIAL_POSITIONS_1 = [
+  [-1, 0, 2],
+  [2,-10,-7],
+  [4,-8,8],
+  [3,5,-1]
+];
+const INITIAL_POSITIONS_2 = [
+  [-8, -10, 0],
+  [5,5,10],
+  [2,-7,3],
+  [9,-8,-3]
+];
+
+const INITIAL_POSITIONS_INPUT = [
+  [1, -4, 3],
+  [-14,9,-4],
+  [-4,-6,7],
+  [6,-9,-11]
+];
+
 const X_AXIS = 0
 const Y_AXIS = 1
 const Z_AXIS = 2
@@ -72,7 +92,7 @@ const calculateEnergy = (attributes) => attributes.reduce((sum, a) => sum + Math
 
 const calculateTotalEnergyForMoon = (position, velocity) => calculateEnergy(position) * calculateEnergy(velocity)
 
-const calculategivenSteps = (steps, initialPositions) => {
+const calculategivenSteps = (steps, initialPositions, initialVelocities =INITIAL_VELOCTY) => {
   return Array(steps).fill('').reduce((acc, _,) => {
     let positionsAndVelocities = calculateNextPositionAndVelocity(acc.nextPositions, acc.nextVelocities)
     let totalEnergy = calculateEnergy(
@@ -85,28 +105,33 @@ const calculategivenSteps = (steps, initialPositions) => {
       totalEnergy,
       ...positionsAndVelocities,
     }
-  }, {nextPositions: initialPositions, nextVelocities: INITIAL_VELOCTY, totalEnergy: 0})
+  }, {nextPositions: initialPositions, nextVelocities:initialVelocities, totalEnergy: 0})
 }
 
-let INITIAL_POSITIONS_1 = [
-  [-1, 0, 2],
-  [2,-10,-7],
-  [4,-8,8],
-  [3,5,-1]
-];
-let INITIAL_POSITIONS_2 = [
-  [-8, -10, 0],
-  [5,5,10],
-  [2,-7,3],
-  [9,-8,-3]
-];
 
-let INITIAL_POSITIONS_INPUT = [
-  [1, -4, 3],
-  [-14,9,-4],
-  [-4,-6,7],
-  [6,-9,-11]
-];
+const getState = (moons, axis) => moons.nextPositions.map((s) => s[axis]).join(',')
+const getVState = (moons, axis) => moons.nextVelocities.map((s) => s[axis]).join(',')
+
+const calculateNumberOfStepsToReturnToSamePositionForAxis = (input, axis) => {
+  let step =0
+  let doIt =true
+  let currentPositions = [...input]
+  let currentVelocities = [...INITIAL_VELOCTY]
+  while (doIt) {
+    step+=1
+    let next = calculategivenSteps(1, [...currentPositions], [...currentVelocities])
+    currentPositions = next.nextPositions
+    currentVelocities = next.nextVelocities
+    if (getState(next, axis) === input.map(s => s[axis]).join(',') && 
+    getVState(next, axis) == '0,0,0,0') {
+      doIt=false
+    }
+  }
+  return step
+}
+const part2 = (input) => [X_AXIS, Y_AXIS, Z_AXIS].map(axis => calculateNumberOfStepsToReturnToSamePositionForAxis([...input], axis))
 
 
-console.log(calculategivenSteps(15, INITIAL_POSITIONS_INPUT))
+console.log(calculategivenSteps(1000, INITIAL_POSITIONS_INPUT).totalEnergy)
+console.log(`part2: LCM of ${part2(INITIAL_POSITIONS_INPUT)}`)
+
