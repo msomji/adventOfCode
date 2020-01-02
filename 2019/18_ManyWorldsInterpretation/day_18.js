@@ -1,6 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 
+let doneView;
 const  main = async (path) => {
   const fileStream = fs.createReadStream(path);
   const rl = readline.createInterface({input: fileStream});
@@ -10,18 +11,56 @@ const  main = async (path) => {
 
     
   }
-// console.log(getStartLocation(cloneView(view)))
-  // console.log(openDoor(view, 'a'))
-  pathFinder(cloneView(view))
+let initialViewState = new ViewState(view)
+calculate(initialViewState)
+console.log(doneView.stepsTaken)
+
+
+
 }
 
+const calculate = viewState => {
+  let nextviews = pathToShortestDistance(viewState)
+  for(v of nextviews) {
+    if (v.isDone) {
+      if (doneView === undefined || v.stepsTaken < doneView.stepsTaken) {
+        doneView = v
+      }
+    } else {
+      if (doneView === undefined || v.stepsTaken < doneView.stepsTaken) {
+        calculate(v)
+      }
+    }
+  }
+}
+
+const pathToShortestDistance = viewState => {
+    let keys = getAllKeys(viewState.view)
+    return keys.map(key => moveToKey(viewState, key)) 
+}
+
+class KeyInfo {
+  constructor(key, steps, position) {
+    this.key = key
+    this.stepsToKey = steps
+    this.position = position
+  }
+}
+
+class ViewState {
+  constructor(view, stepsTaken=0){
+    this.view = view
+    this.stepsTaken = stepsTaken
+    this.isDone = isDone(view)
+  }
+}
 const moveRight = ([x,y]) => [x+1, y]
 const moveLeft = ([x,y]) => [x-1, y]
 const moveUp = ([x,y]) => [x, y-1]
 const moveDown = ([x,y]) => [x, y+1]
 
 const getStartLocation  = (view) => {
-  return view.reduce((location, row, index) => {
+  return [...view].reduce((location, row, index) => {
     if(row.includes('@')) {
       return [row.indexOf('@'),index]
     }
@@ -32,60 +71,54 @@ const cloneView = view => view.reduce((newView, row )=> {
   newView.push([...row])
   return newView
 }, [])
-const containsKeysOrDoors = (view) => {
-  return view.flat().filter(s => s !== '.').filter(s => s !== '#').filter(s => s !== '@').length >0
+
+
+const getAllKeys = (view, steps =1, visited =[]) => {
+  const [x1,y1] = getStartLocation(view)
+  return [moveUp, moveDown, moveRight, moveLeft].reduce((acc, direction) => {
+    let [x,y] = direction([x1,y1])
+    if(visited.includes([x,y].join(','))){
+      return acc;
+    }
+    switch (view[y][x]) {
+      case '#':
+        break
+      case '.':
+        let updated = cloneView(view)
+        updated[y1][x1] = '.'
+        updated[y][x] = '@'
+        acc.push(...getAllKeys(updated, steps+1, [...visited, [x,y].join(',')]))
+        break;
+      case view[y][x].toLowerCase():
+        acc.push(new KeyInfo(view[y][x], steps, [x,y]))
+        break;
+    }
+    return acc;
+  }, [])
 }
-
-const openDoor = (view, key) =>  cloneView(view).map(row => row.map(e => e == key.toUpperCase() ? '.' : e))
-
-
-const pathFinder = view => {
-  let potential = [{view, steps:0}] 
-  let again = true
-  while (again) {
-    potential.forEach(current => {
-      if (!containsKeysOrDoors(cloneView(current.view))) { 
-        console.log(current.steps)
-        again = false
+const openDoor =(view, door) => {
+  return view.map(row => row.map(d => d ==door?  '.': d))
+}
+const isDone = view => {
+  let isDone = true
+  view.forEach(row =>{
+    row.forEach(e => {
+      if(e !== '.' && e !== '#' && e !== '@') {
+        isDone = false
       }
-      let nextStep = collectKeys(current.view, current.steps)
-      let happy = nextStep
-      .filter(s => s.skip !== true)
-      potential = [...potential, ...happy]
     })
   }
+  )
+  return isDone;
+
 }
-
-const collectKeys = (view, steps =0) => {
-    const [currentX, currentY] = getStartLocation(cloneView(view))
-    
-    let nextCoordinate = [moveLeft, moveRight, moveDown, moveUp]
-          .map(direction =>direction([currentX, currentY]))
-          .filter(coords => coords[0] <= view[0].length-1 && coords[0] >=0)
-          .filter(coords => coords[1] <= view.length-1 && coords[0] >=0)
-          .filter(([x,y]) => view[y][x] !=='#')
-          // .filter(([x,y]) => [x,y].join('') !== [previousX, previousY].join(''))
-    let potentials = []
-    for (let i = 0; i <= nextCoordinate.length-1; i++) {
-      let [x,y] = nextCoordinate[i]
-      if (view[y][x] === '.') {
-        let nextView = cloneView(view)
-        nextView[currentY][currentX] = '.'
-        nextView[y][x] = '@'
-        potentials.push({ view: nextView,
-          steps: steps+1,
-        })
-      } else if (view[y][x] === view[y][x].toLowerCase()) { // is a key
-        let nextView = openDoor(view, view[y][x])
-        nextView[currentY][currentX] = '.'
-        nextView[y][x] = '@'
-        potentials.push({ view: nextView,
-          steps: steps+1,
-          
-        })
-      }
-    }
-
-    return potentials
-  }
-module.exports = main('example.txt')
+const moveToKey = (viewState, key) => {
+  const [x1,y1] = getStartLocation(viewState.view)
+  const [keyX, keyY] = key.position
+  let newView = cloneView(viewState.view)
+  newView[y1][x1] = '.'
+  newView[keyY][keyX] = '@'
+  newView = openDoor(newView, key.key.toUpperCase())
+  return new ViewState(newView, viewState.stepsTaken+key.stepsToKey)
+}
+module.exports = main(process.env.PWD+'/example3.txt')
