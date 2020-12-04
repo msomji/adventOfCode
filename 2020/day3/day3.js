@@ -1,40 +1,42 @@
 const fs = require('fs');
-const move = ([x,y], [slopeX, slopeY]) => [x+slopeX, y+slopeY]
 
-const treesBySlope = (input, slopeX =3,slopeY=1 )=> {
-  let [x, y] = [0,0]
-  let treeCount = 0
-  while (y < input.length) {
-    [x,y] = move([x,y], [slopeX,slopeY])
-    if (input[y] == undefined) {
-      return treeCount
-    }
+const moveBy = (slopeX, slopeY) => ([x, y]) => [x + slopeX, y + slopeY]
 
-    if (x >= input[y].length) {
-      x = x - input[y].length
-    }
-
-    if(input[y][x] == '#') {
-      treeCount = treeCount +=1
-    }
+const treesBySlope = (input) => (slopeFunction, initialPosition = [0, 0], counter = {}) => {
+  let [x, y] = slopeFunction(initialPosition)
+  if (input[y] == undefined) {
+    return counter
   }
-  return treeCount
+
+  if (x >= input[y].length) {
+    x = x - input[y].length
+  }
+
+  if (input[y][x] == '#') {
+    counter['#'] = (counter['#'] || 0) + 1
+  }
+
+  return treesBySlope(input)(slopeFunction, [x, y], counter)
 }
 
-
-fs.readFile('./input.txt', (err, data) => { 
-  if (err) throw err; 
+fs.readFile('./input.txt', (err, data) => {
+  if (err) throw err;
   input = data.toString()
-              .split('\n')
-              .map(a => a.split(""))
-             
-  answer1 = treesBySlope(input)
-  answer2 = treesBySlope(input,1,1) *
-            treesBySlope(input,3,1) *
-            treesBySlope(input,5,1) *
-            treesBySlope(input,7,1) *
-            treesBySlope(input,1,2) 
+    .split('\n')
+    .map(a => a.split(""));
+
+  const treeCounter = treesBySlope(input)
+
+  answer1 = treeCounter(moveBy(3, 1))['#']
   
+  answer2 = treeCounter(moveBy(1, 1))['#'] *
+    treeCounter(moveBy(3, 1))['#'] *
+    treeCounter(moveBy(5, 1))['#'] *
+    treeCounter(moveBy(7, 1))['#'] *
+    treeCounter(moveBy(1, 2))['#']
+
+
   console.log(`answer1: ${answer1}`)
   console.log(`answer2: ${answer2}`)
+
 })
