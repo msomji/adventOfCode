@@ -6,7 +6,6 @@ const format = input => {
     .map(Number)
 }
 
-
 const p1 = (formattedInput) => {
   let effectiveRating = 0
   let jolts = new Map()
@@ -41,19 +40,15 @@ const p2 = formattedInput => {
     })
   });
   return pathsToJolt.get(Math.max(...sortedJolts))
-
 }
 
 fs.readFile('./input.txt', (err, data) => {
   if (err) throw err;
   const input1 = format(data.toString())
 
-  // console.log(input1)
-
-
-
   answer1 = p1(input1)
   answer2 = p2(input1)
+  
   console.log(`answer1: ${answer1}`)
   console.log(`answer2: ${answer2}`)
 
