@@ -8,23 +8,24 @@ const format = input => {
 
 
 const p1 = (formattedInput) => {
-  let jolts = {}
   let effectiveRating = 0
-  sorted = formattedInput.sort((a, b) => a - b)
-  highestRatedAdapter = sorted[sorted.length - 1] + 3
-  for (let i = 0; i < sorted.length; i++) {
-    if (effectiveRating < sorted[i] + 3) {
-      let difference = sorted[i] - effectiveRating
+  let jolts = new Map()
+  jolts.set(1, 0)
+  jolts.set(2, 0)
+  jolts.set(3, 0)
 
-      jolts[difference] = jolts[difference] ? jolts[difference] + 1 : 1
-
+  highestRatedAdapter = Math.max(...formattedInput) +3
+  sorted = [...formattedInput, highestRatedAdapter].sort((a, b) => a - b)
+  sorted.forEach(jolt => {
+    let difference = jolt - effectiveRating
+    if(jolts.has(difference)) {
+      jolts.set(difference, jolts.get(difference) + 1)
       effectiveRating += difference
     }
-  }
-  diff = highestRatedAdapter - effectiveRating
-  jolts[diff] = jolts[diff] ? jolts[diff] + 1 : 1
-  return jolts[1] * jolts[3]
+  })
+  return jolts.get(1) * jolts.get(3)
 }
+
 const p2 = formattedInput => {
   sortedJolts = formattedInput.sort((a,b) => a-b)
   const pathsToJolt = new Map()
@@ -54,5 +55,6 @@ fs.readFile('./input.txt', (err, data) => {
   answer1 = p1(input1)
   answer2 = p2(input1)
   console.log(`answer1: ${answer1}`)
-  console.log(answer2)
+  console.log(`answer2: ${answer2}`)
+
 })
